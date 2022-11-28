@@ -1,7 +1,7 @@
 use algorithms;
 
 #[derive(Debug, Clone, PartialEq)]
-struct RangeFill {
+pub struct RangeFill {
     fill: Vec<f64>
 }
 

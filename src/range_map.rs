@@ -1,5 +1,5 @@
 #[derive(Debug, Clone, PartialEq)]
-struct RangeMap<K: PartialOrd + Copy, V: PartialEq + Clone> {
+pub struct RangeMap<K: PartialOrd + Copy, V: PartialEq + Clone> {
     default_value: V,
     values: Vec<V>,
     ranges: Vec<K>,
