@@ -5,7 +5,7 @@ A rust library that will map a range of values to another value.
 ```
 ...
 [dependencies]
-range_map = {  git = "https://github.com/Monksc/range_map", rev = "8774fef"}
+range_map = {  git = "https://github.com/Monksc/range_map", rev = "db02bd9"}
 ```
 
 # Example
