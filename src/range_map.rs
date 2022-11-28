@@ -1,12 +1,12 @@
 #[derive(Debug, Clone, PartialEq)]
-struct RangeMap<T: PartialEq + Clone, J: PartialOrd + Copy> {
-    default_value: T,
-    values: Vec<T>,
-    ranges: Vec<J>,
+struct RangeMap<K: PartialOrd + Copy, V: PartialEq + Clone> {
+    default_value: V,
+    values: Vec<V>,
+    ranges: Vec<K>,
 }
 
-impl<T: PartialEq + Clone, J: PartialOrd + Copy> From<T> for RangeMap<T, J> {
-    fn from(out_of_range_value: T) -> Self {
+impl<K: PartialOrd + Copy, V: PartialEq + Clone> From<V> for RangeMap<K, V> {
+    fn from(out_of_range_value: V) -> Self {
         Self {
             default_value: out_of_range_value,
             values: Vec::new(),
@@ -15,12 +15,12 @@ impl<T: PartialEq + Clone, J: PartialOrd + Copy> From<T> for RangeMap<T, J> {
     }
 }
 
-impl<T: PartialEq + Clone, J: PartialOrd + Copy> RangeMap<T, J> {
-    pub fn from(out_of_range_value: T) -> Self {
+impl<K: PartialOrd + Copy, V: PartialEq + Clone> RangeMap<K, V> {
+    pub fn from(out_of_range_value: V) -> Self {
         From::from(out_of_range_value)
     }
 
-    pub fn set(&mut self, value: T, min: J, max: J) {
+    pub fn set(&mut self, value: V, min: K, max: K) {
         let mut min = min;
         let mut max = max;
 
@@ -80,7 +80,7 @@ impl<T: PartialEq + Clone, J: PartialOrd + Copy> RangeMap<T, J> {
         }
     }
 
-    pub fn value(&self, value: J) -> &T {
+    pub fn value(&self, value: K) -> &V {
         let seen_before = algorithms::seen_before_or_equal(&self.ranges, value);
         if seen_before == 0 {
             &self.default_value
@@ -89,7 +89,7 @@ impl<T: PartialEq + Clone, J: PartialOrd + Copy> RangeMap<T, J> {
         }
     }
 
-    pub fn value_address(&self, value: &J) -> &T {
+    pub fn value_address(&self, value: &K) -> &V {
         let seen_before = algorithms::seen_before_or_equal_address(&self.ranges, value);
         if seen_before == 0 || seen_before > self.values.len() {
             &self.default_value
@@ -98,7 +98,7 @@ impl<T: PartialEq + Clone, J: PartialOrd + Copy> RangeMap<T, J> {
         }
     }
 
-    pub fn value_range(&self, min: J, max: J) -> &T {
+    pub fn value_range(&self, min: K, max: K) -> &V {
         let seen_before_min = algorithms::seen_before_or_equal(&self.ranges, min);
         let seen_before_max = algorithms::seen_before(&self.ranges, max);
         if seen_before_min != seen_before_max {
@@ -113,7 +113,7 @@ impl<T: PartialEq + Clone, J: PartialOrd + Copy> RangeMap<T, J> {
     }
 
     // [min, max)
-    pub fn values(&self, min: J, max: J) -> Vec::<&T> {
+    pub fn values(&self, min: K, max: K) -> Vec::<&V> {
         let mut seen_before_min = algorithms::seen_before_or_equal(&self.ranges, min);
         let mut seen_before_max = algorithms::seen_before(&self.ranges, max);
 
