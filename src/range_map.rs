@@ -20,6 +20,20 @@ impl<K: PartialOrd + Copy, V: PartialEq + Clone> RangeMap<K, V> {
         From::from(out_of_range_value)
     }
 
+    pub fn data(&self) -> Vec<(&V, K, K)> {
+        let mut r = Vec::new();
+
+        for i in 0..self.values.len() {
+            r.push((&self.values[i], self.ranges[i], self.ranges[i+1]));
+        }
+
+        return r;
+    }
+
+    pub fn default_value(&self) -> &V {
+        &self.default_value
+    }
+
     pub fn set(&mut self, value: V, min: K, max: K) {
         let mut min = min;
         let mut max = max;
