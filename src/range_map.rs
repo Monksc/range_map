@@ -20,11 +20,29 @@ impl<K: PartialOrd + Copy, V: PartialEq + Clone> RangeMap<K, V> {
         From::from(out_of_range_value)
     }
 
-    pub fn data(&self) -> Vec<(&V, K, K)> {
+    pub fn data(&self) -> Vec<(V, K, K)> {
         let mut r = Vec::new();
-
         for i in 0..self.values.len() {
-            r.push((&self.values[i], self.ranges[i], self.ranges[i+1]));
+            r.push((self.values[i].clone(), self.ranges[i], self.ranges[i+1]));
+        }
+        return r;
+    }
+
+    // [min, max)
+    pub fn data_range(&self, min: K, max: K) -> Vec<(V, K, K)> {
+        let mut seen_before_min = algorithms::seen_before_or_equal(&self.ranges, min);
+        let mut seen_before_max = algorithms::seen_before(&self.ranges, max);
+
+        if seen_before_min == 0 {
+            seen_before_min = 1;
+        }
+        if seen_before_max-1>= self.values.len() {
+            seen_before_max = self.values.len();
+        }
+
+        let mut r = Vec::new();
+        for i in seen_before_min..=seen_before_max {
+            r.push((self.values[i-1].clone(), self.ranges[i-1], self.ranges[i]));
         }
 
         return r;
