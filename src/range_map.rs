@@ -36,7 +36,7 @@ impl<K: PartialOrd + Copy, V: PartialEq + Clone> RangeMap<K, V> {
         if seen_before_min == 0 {
             seen_before_min = 1;
         }
-        if seen_before_max-1>= self.values.len() {
+        if seen_before_max >= self.values.len()+1 {
             seen_before_max = self.values.len();
         }
 
@@ -114,7 +114,7 @@ impl<K: PartialOrd + Copy, V: PartialEq + Clone> RangeMap<K, V> {
 
     pub fn value(&self, value: K) -> &V {
         let seen_before = algorithms::seen_before_or_equal(&self.ranges, value);
-        if seen_before == 0 {
+        if seen_before == 0 || seen_before > self.values.len() {
             &self.default_value
         } else {
             &self.values[seen_before-1]
@@ -152,7 +152,7 @@ impl<K: PartialOrd + Copy, V: PartialEq + Clone> RangeMap<K, V> {
         if seen_before_min == 0 {
             seen_before_min = 1;
         }
-        if seen_before_max-1>= self.values.len() {
+        if seen_before_max >= self.values.len() + 1 {
             seen_before_max = self.values.len();
         }
 
@@ -248,6 +248,17 @@ mod test {
 
         // Fill [Before, After]
         range.set(true, 0.0, 25.0);
+        assert_eq!(range.ranges, vec![]);
+        assert_eq!(range.values, vec![]);
+    }
+
+    #[test]
+    pub fn test_fill_all() {
+        let mut range = RangeMap::from(true);
+        range.set(false, 1.0, 7.0);
+        range.set(true, 1.0, 7.0);
+        println!("{:?}", range.ranges);
+        println!("{:?}", range.values);
         assert_eq!(range.ranges, vec![]);
         assert_eq!(range.values, vec![]);
     }
