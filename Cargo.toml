@@ -6,4 +6,4 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-algorithms = {  git = "https://github.com/Monksc/algorithms_rust_lib", rev = "09eed6c"}
+algorithms = {  git = "https://github.com/Monksc/algorithms_rust_lib", rev = "c3bc40e"}
