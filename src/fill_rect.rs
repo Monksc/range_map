@@ -81,6 +81,100 @@ impl FillRect {
         );
     }
 
+    pub fn biggest_unfilled_area_block(&self, min_x: f64, min_y: f64, max_x: f64, max_y: f64) -> f64 {
+        let mut biggest_area = 0.0;
+        for (maps, local_min_x, local_max_x) in self.map.data_range_address(min_x, max_x) {
+            let Some(maps) = maps else {
+                let area = (local_max_x - local_min_x) * (max_y - min_y);
+                if biggest_area < area {
+                    biggest_area = area;
+                }
+                continue;
+            };
+            for (value, local_min_y, local_max_y) in maps.data_range_address(min_y, max_y) {
+                let Some(value) = value else { continue };
+                if *value == false {
+                    let area = (local_max_x - local_min_x) * (local_max_y - local_min_y);
+                    if biggest_area < area {
+                        biggest_area = area;
+                    }
+                }
+            }
+        }
+        return biggest_area;
+    }
+
+    pub fn biggest_unfilled_area_block_padding(
+        &self,
+        min_x: f64, min_y: f64,
+        max_x: f64, max_y: f64,
+        x_padding: f64, y_padding: f64
+    ) -> f64 {
+        if max_x < min_x {
+            return self.biggest_unfilled_area_block_padding(max_x, min_y, min_x, max_y, x_padding, y_padding);
+        }
+        if max_y < min_y {
+            return self.biggest_unfilled_area_block_padding(min_x, max_y, max_x, min_y, x_padding, y_padding);
+        }
+        return self.biggest_unfilled_area_block(
+            min_x - x_padding, min_y - y_padding,
+            max_x + x_padding, max_y + y_padding
+        );
+    }
+
+    pub fn contains_unfilled_rect_width_height(
+        &self,
+        min_x: f64, min_y: f64,
+        max_x: f64, max_y: f64,
+        width: f64, height: f64
+    ) -> bool {
+        for (maps, local_min_x, local_max_x) in self.map.data_range_address(min_x, max_x) {
+            let Some(maps) = maps else {
+                if (local_max_x - local_min_x) > width &&
+                    (max_y - min_y) > height
+                {
+                    return true;
+                }
+                continue;
+            };
+            for (value, local_min_y, local_max_y) in maps.data_range_address(min_y, max_y) {
+                let Some(value) = value else { continue };
+                if *value == false {
+                    if (local_max_x - local_min_x) > width &&
+                        (local_max_y - local_min_y) > height
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    pub fn contains_unfilled_rect_width_height_padding(
+        &self,
+        min_x: f64, min_y: f64,
+        max_x: f64, max_y: f64,
+        width: f64, height: f64,
+        x_padding: f64, y_padding: f64,
+    ) -> bool {
+        if max_x < min_x {
+            return self.contains_unfilled_rect_width_height_padding(
+                max_x, min_y, min_x, max_y, width, height, x_padding, y_padding,
+            );
+        }
+        if max_y < min_y {
+            return self.contains_unfilled_rect_width_height_padding(
+                min_x, max_y, max_x, min_y, width, height, x_padding, y_padding,
+            );
+        }
+        return self.contains_unfilled_rect_width_height(
+            min_x - x_padding, min_y - y_padding,
+            max_x + x_padding, max_y + y_padding,
+            width, height,
+        );
+    }
+
     pub fn fill_rect(&mut self, min_x: f64, min_y: f64, max_x: f64, max_y: f64) {
         if max_x < min_x {
             return self.fill_rect(max_x, min_y, min_x, max_y);

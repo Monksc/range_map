@@ -48,6 +48,26 @@ impl<K: PartialOrd + Copy, V: PartialEq + Clone> RangeMap<K, V> {
         return r;
     }
 
+    // [min, max)
+    pub fn data_range_address(&self, min: K, max: K) -> Vec<(&V, K, K)> {
+        let mut seen_before_min = algorithms::seen_before_or_equal(&self.ranges, min);
+        let mut seen_before_max = algorithms::seen_before(&self.ranges, max);
+
+        if seen_before_min == 0 {
+            seen_before_min = 1;
+        }
+        if seen_before_max >= self.values.len()+1 {
+            seen_before_max = self.values.len();
+        }
+
+        let mut r = Vec::new();
+        for i in seen_before_min..=seen_before_max {
+            r.push((&self.values[i-1], self.ranges[i-1], self.ranges[i]));
+        }
+
+        return r;
+    }
+
     pub fn default_value(&self) -> &V {
         &self.default_value
     }
