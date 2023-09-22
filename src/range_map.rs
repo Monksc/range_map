@@ -28,6 +28,10 @@ impl<K: PartialOrd + Copy, V: PartialEq + Clone> RangeMap<K, V> {
         return r;
     }
 
+    pub fn get_ranges(&self) -> &Vec<K> {
+        &self.ranges
+    }
+
     // [min, max)
     pub fn data_range(&self, min: K, max: K) -> Vec<(V, K, K)> {
         let mut seen_before_min = algorithms::seen_before_or_equal(&self.ranges, min);

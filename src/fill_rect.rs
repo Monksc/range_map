@@ -212,6 +212,14 @@ impl FillRect {
 
         return r;
     }
+
+    pub fn get_ys(&self, x: f64) -> Option<&Vec<f64>> {
+        if let Some(range) = self.map.value(x) {
+            Some(range.get_ranges())
+        } else {
+            None
+        }
+    }
 }
 
 #[cfg(test)]
